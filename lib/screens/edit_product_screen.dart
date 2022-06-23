@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import '../providers/product.dart';
+import '../providers/products.dart';
 
 class EditProductScreen extends StatefulWidget {
   static const routeName = '/edit-product';
@@ -11,11 +14,13 @@ class EditProductScreen extends StatefulWidget {
 }
 
 class _EditProductScreenState extends State<EditProductScreen> {
+
   final _priceFocusNode = FocusNode();
   final _descriptionFocusNode = FocusNode();
   final _imageUrlController = TextEditingController();
   final _imageUrlFocusNode = FocusNode();
   final _form = GlobalKey<FormState>();
+  
   var _editedProduct = Product(
     id: null,
     title: '',
@@ -54,15 +59,22 @@ class _EditProductScreenState extends State<EditProductScreen> {
   }
 
   void _saveForm() {
+    
     final isValid = _form.currentState.validate();
+    
     if (!isValid) {
       return;
     }
+    
     _form.currentState.save();
+
     print(_editedProduct.title);
     print(_editedProduct.description);
     print(_editedProduct.price);
     print(_editedProduct.imageUrl);
+    
+    Provider.of<Products>(context, listen:false).addProduct(_editedProduct);
+    Navigator.of(context).pop();
   }
 
   @override
