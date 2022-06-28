@@ -13,7 +13,7 @@ class Product with ChangeNotifier {
   void _setFavValue(bool newValue) {
     isFavorite = newValue;
     notifyListeners();
-  } 
+  }
 
   Product({
     @required this.id,
@@ -24,22 +24,24 @@ class Product with ChangeNotifier {
     this.isFavorite = false,
   });
 
-  void toggleFavoriteStatus(String token) async {
+  void toggleFavoriteStatus(String token, String userId) async {
     final oldStatus = isFavorite;
 
     isFavorite = !isFavorite;
     notifyListeners();
 
     final url = Uri.parse(
-        'https://flutter-3074f-default-rtdb.asia-southeast1.firebasedatabase.app/products/$id.json?auth=$token');
+        'https://flutter-3074f-default-rtdb.asia-southeast1.firebasedatabase.app/userFavorites/$userId/$id.json?auth=$token');
     try {
-      final response = await http.patch(url,
-          body: json.encode({
-            'isFavorite': isFavorite,
-          }));
-        if (response.statusCode >= 400){
-          _setFavValue(oldStatus);
-        }
+      final response = await http.put(
+        url,
+        body: json.encode(
+          isFavorite,
+        ),
+      );
+      if (response.statusCode >= 400) {
+        _setFavValue(oldStatus);
+      }
     } catch (error) {
       _setFavValue(oldStatus);
     }
